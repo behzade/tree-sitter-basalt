@@ -22,6 +22,7 @@ module.exports = grammar({
   supertypes: $ => [ $._statement, $._declaration, $._expression, $._type, $._pattern, ],
   conflicts: $ => [
     [$._type, $._expression],
+    [$._declaration, $.handler_expression], // <-- Use this as suggested by the error message
   ],
   word: $ => $.identifier,
 
@@ -99,7 +100,7 @@ module.exports = grammar({
     ),
 
     function_definition: $ => seq(
-      field('name', $.identifier), ':', $.function_signature, '=', field('body', $._expression)
+      field('name', $.identifier), ':', $.function_signature, '=', field('body', $.block)
     ),
 
     method_signature: $ => seq(
@@ -115,6 +116,7 @@ module.exports = grammar({
       $.binary_expression, $.call_expression, $.member_expression, $.block,
       $.struct_expression, $.if_expression, $.while_expression, $.match_expression,
       $.with_expression, $.perform_expression, $.lambda_expression, $.meta_block,
+      $.handler_expression,
     ),
 
     parenthesized_expression: $ => seq('(', $._expression, ')'),
@@ -170,6 +172,11 @@ module.exports = grammar({
     lambda_expression: $ => prec(PREC.lambda, seq(
       choice($.parameters, $.identifier), '=>', $._expression
     )),
+    handler_expression: $ => seq(
+      '{',
+      repeat($.function_definition),
+      '}'
+    ),
 
     meta_block: $ => seq('meta', $.block),
 

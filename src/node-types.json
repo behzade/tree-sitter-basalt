@@ -42,6 +42,10 @@
         "named": true
       },
       {
+        "type": "handler_expression",
+        "named": true
+      },
+      {
         "type": "identifier",
         "named": true
       },
@@ -380,7 +384,7 @@
         "required": true,
         "types": [
           {
-            "type": "_expression",
+            "type": "block",
             "named": true
           }
         ]
@@ -483,6 +487,21 @@
       "types": [
         {
           "type": "type_parameters",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "handler_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "function_definition",
           "named": true
         }
       ]
