@@ -10,7 +10,10 @@
         "basalt"
       ],
       "injection-regex": "^basalt$",
-      "class-name": "TreeSitterBasalt"
+      "class-name": "TreeSitterBasalt",
+      "queries": {
+        "highlights": "queries/highlights.scm"
+      }
     }
   ],
   "metadata": {

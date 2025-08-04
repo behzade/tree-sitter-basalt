@@ -1927,14 +1927,6 @@
     [
       "_type",
       "_expression"
-    ],
-    [
-      "destructuring_pattern",
-      "call_expression"
-    ],
-    [
-      "struct_expression",
-      "block"
     ]
   ],
   "precedences": [],

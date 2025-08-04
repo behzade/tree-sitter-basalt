@@ -22,8 +22,6 @@ module.exports = grammar({
   supertypes: $ => [ $._statement, $._declaration, $._expression, $._type, $._pattern, ],
   conflicts: $ => [
     [$._type, $._expression],
-    [$.destructuring_pattern, $.call_expression],
-    [$.struct_expression, $.block],
   ],
   word: $ => $.identifier,
 
