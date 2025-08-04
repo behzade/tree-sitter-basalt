@@ -42,10 +42,6 @@
         "named": true
       },
       {
-        "type": "handler_expression",
-        "named": true
-      },
-      {
         "type": "identifier",
         "named": true
       },
@@ -55,10 +51,6 @@
       },
       {
         "type": "integer_literal",
-        "named": true
-      },
-      {
-        "type": "lambda_expression",
         "named": true
       },
       {
@@ -169,6 +161,10 @@
       },
       {
         "type": "path_expression",
+        "named": true
+      },
+      {
+        "type": "primitive_type",
         "named": true
       }
     ]
@@ -283,7 +279,7 @@
       "required": false,
       "types": [
         {
-          "type": "method_signature",
+          "type": "function_signature",
           "named": true
         },
         {
@@ -376,6 +372,21 @@
     }
   },
   {
+    "type": "function_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "function_definition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "function_definition",
     "named": true,
     "fields": {
@@ -385,16 +396,6 @@
         "types": [
           {
             "type": "block",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -415,22 +416,12 @@
     "type": "function_signature",
     "named": true,
     "fields": {
-      "parameters": {
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "parameters",
-            "named": true
-          }
-        ]
-      },
-      "return_type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_type",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -438,10 +429,10 @@
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "with_clause",
+          "type": "function_type",
           "named": true
         }
       ]
@@ -460,7 +451,11 @@
           "named": true
         },
         {
-          "type": "parameters",
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "with_clause",
           "named": true
         }
       ]
@@ -475,7 +470,11 @@
         "required": true,
         "types": [
           {
-            "type": "_type",
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "path_expression",
             "named": true
           }
         ]
@@ -493,15 +492,30 @@
     }
   },
   {
-    "type": "handler_expression",
+    "type": "handler_definition",
     "named": true,
-    "fields": {},
+    "fields": {
+      "effect": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "function_definition",
+          "type": "function_block",
+          "named": true
+        },
+        {
+          "type": "with_clause",
           "named": true
         }
       ]
@@ -599,11 +613,11 @@
       }
     },
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
-          "type": "function_definition",
+          "type": "function_block",
           "named": true
         }
       ]
@@ -648,26 +662,7 @@
       "required": false,
       "types": [
         {
-          "type": "method_signature",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "lambda_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        },
-        {
-          "type": "parameters",
+          "type": "function_signature",
           "named": true
         }
       ]
@@ -760,32 +755,6 @@
     }
   },
   {
-    "type": "method_signature",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "function_signature",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "parameter",
     "named": true,
     "fields": {
@@ -812,21 +781,6 @@
     }
   },
   {
-    "type": "parameters",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "parameter",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "parenthesized_expression",
     "named": true,
     "fields": {},
@@ -844,27 +798,16 @@
   {
     "type": "path_expression",
     "named": true,
-    "fields": {
-      "member": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "module": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -877,6 +820,21 @@
       "types": [
         {
           "type": "_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "primitive_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "primitive_type",
           "named": true
         }
       ]
@@ -984,7 +942,17 @@
     "type": "type_definition",
     "named": true,
     "fields": {
-      "body": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -997,21 +965,15 @@
             "named": true
           },
           {
+            "type": "handler_definition",
+            "named": true
+          },
+          {
             "type": "interface_definition",
             "named": true
           },
           {
             "type": "struct_definition",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
