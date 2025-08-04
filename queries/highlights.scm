@@ -26,6 +26,7 @@
 "interface" @keyword
 "effect" @keyword
 "meta" @keyword
+"handler" @keyword
 
 ;; ====================
 ;; LITERALS
@@ -89,6 +90,14 @@
 (field_declaration name: (identifier) @property)
 (struct_field name: (identifier) @property)
 
+; Function definitions and signatures
+(function_signature name: (identifier) @function)
+(function_definition) @function
+(function_block) @function
+
+; Import paths
+(import_path) @namespace
+
 ; General property access rule. This comes first.
 (member_expression property: (identifier) @property)
 
@@ -97,8 +106,35 @@
   function: (member_expression
     property: (identifier) @function.call))
 
+; Path-based function calls (like std::fmt::println)
+(call_expression
+  function: (path_expression (identifier) @function.call))
+
+; Expression highlighting
+(parenthesized_expression) @expression
+(path_expression) @expression
+(binary_expression) @expression
+(struct_expression) @expression
+(if_expression) @expression
+(while_expression) @expression
+(match_expression) @expression
+(with_expression) @expression
+(perform_expression) @expression
+
+; Pattern highlighting
+(destructuring_pattern) @pattern
+(match_arm) @pattern
+
+; Block highlighting
 (block) @block
 (meta_block) @attribute
+
+; Definition highlighting
+(struct_definition) @type
+(interface_definition) @type
+(effect_definition) @type
+(enum_definition) @type
+(handler_definition) @type
 
 ;; ====================
 ;; TYPES (Specific Nodes)
@@ -108,5 +144,10 @@
 (generic_type name: (_) @type)
 (function_type) @type
 (never_type) @type.builtin
+(primitive_type) @type.builtin
 
 (type_parameters "<" @punctuation.bracket ">" @punctuation.bracket)
+
+; Arguments and clauses
+(arguments) @expression
+(with_clause) @expression
