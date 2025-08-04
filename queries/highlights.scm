@@ -1,65 +1,10 @@
 ;; ====================
-;; IDENTIFIERS
+;; COMMENTS
 ;; ====================
 
-(identifier) @variable
-
-; Constants: ALL_CAPS
-((identifier) @constant
- (#match? @constant "^[A-Z][A-Z\\d_]+$"))
-
-; Type-like: UpperCamelCase
-((identifier) @type)
-  (#match? @type "^[A-Z][a-zA-Z\\d]*$")
-
-;; ====================
-;; DEFINITIONS
-;; ====================
-
-(function_definition name: (identifier) @function)
-(method_signature name: (identifier) @method)
-(parameter name: (identifier) @parameter)
-(variable_declaration name: (identifier) @variable)
-
-(type_definition name: (identifier) @type)
-(enum_variant name: (identifier) @constructor)
-(field_declaration name: (identifier) @property)
-(struct_field name: (identifier) @property)
-(implementation type: (identifier) @type)
-(implementation interface: (identifier) @interface)
-
-;; ====================
-;; EXPRESSIONS
-;; ====================
-
-(call_expression function: (_) @function.call)
-(member_expression property: (identifier) @property)
-(path_expression module: (_) @namespace
-                 member: (identifier) @property)
-
-(lambda_expression) @function
-(perform_expression) @keyword
-(with_expression) @keyword
-
-(block) @block
-(meta_block) @attribute
-
-;; ====================
-;; TYPES
-;; ====================
-
-(handler_type) @type
-(generic_type name: (_) @type)
-(function_type) @type
-(never_type) @type.builtin
-(type_parameters "<" @punctuation.bracket ">" @punctuation.bracket)
-
-;; ====================
-;; LITERALS
-;; ====================
-
-(string_literal) @string
-(integer_literal) @number
+(comment) @comment
+((comment) @comment.documentation
+ (#match? @comment.documentation "^///"))
 
 ;; ====================
 ;; KEYWORDS
@@ -83,23 +28,20 @@
 "meta" @keyword
 
 ;; ====================
-;; COMMENTS
+;; LITERALS
 ;; ====================
 
-(comment) @comment
-((comment) @comment.documentation
- (#match? @comment.documentation "^///"))
+(string_literal) @string
+(integer_literal) @number
 
 ;; ====================
-;; PUNCTUATION & OPERATORS
+;; PUNCTUATION & OPERATORS (General)
 ;; ====================
 
 "(" @punctuation.bracket
 ")" @punctuation.bracket
 "{" @punctuation.bracket
 "}" @punctuation.bracket
-"<" @punctuation.bracket
-">" @punctuation.bracket
 "," @punctuation.delimiter
 ":" @punctuation.delimiter
 "." @punctuation.delimiter
@@ -120,3 +62,57 @@
 "<=" @operator
 ">" @operator
 "<" @operator
+
+;; ====================
+;; IDENTIFIERS (Generic, Regex-based)
+;; ====================
+
+(identifier) @variable
+
+((identifier) @constant
+ (#match? @constant "^[A-Z][A-Z\\d_]+$"))
+
+((identifier) @type
+  (#match? @type "^[A-Z][a-zA-Z\\d]*$"))
+
+;; ====================
+;; DEFINITIONS & EXPRESSIONS (Context-specific)
+;; ====================
+
+; Definitions
+(function_definition name: (identifier) @function)
+(method_signature name: (identifier) @function)
+(parameter name: (identifier) @parameter)
+(variable_declaration name: (identifier) @variable)
+(type_definition name: (identifier) @type)
+(enum_variant name: (identifier) @constructor)
+(implementation type: (identifier) @type)
+(implementation interface: (identifier) @interface)
+(field_declaration name: (identifier) @property)
+(struct_field name: (identifier) @property)
+(path_expression module: (_) @namespace)
+
+; General property access rule. This comes first.
+(member_expression property: (identifier) @property)
+
+; Call-specific rules. These come AFTER the general property rule to override it.
+(call_expression function: (identifier) @function.call)
+(call_expression
+  function: (member_expression
+    property: (identifier) @function.call))
+
+(lambda_expression) @function
+
+(block) @block
+(meta_block) @attribute
+
+;; ====================
+;; TYPES (Specific Nodes)
+;; ====================
+
+(handler_type) @type
+(generic_type name: (_) @type)
+(function_type) @type
+(never_type) @type.builtin
+
+(type_parameters "<" @punctuation.bracket ">" @punctuation.bracket)
