@@ -71,9 +71,7 @@ module.exports = grammar({
       '{', repeat($.function_definition), '}'
     ),
 
-    // ✅ FIXED: Reverted to a more explicit, unambiguous rule.
     variable_declaration: $ => choice(
-      // Declaration with `:=` (e.g., `x := 5`)
       seq(
         optional('mut'),
         field('name', $.identifier),
@@ -81,26 +79,10 @@ module.exports = grammar({
         ':=',
         field('value', $._expression)
       ),
-      // Declaration with `mut` and `=` (e.g., `mut x = 5`)
-      seq(
-        'mut',
-        field('name', $.identifier),
-        optional(seq(':', field('type', $._type))),
-        '=',
-        field('value', $._expression)
-      ),
-      // Declaration with a type and `=` (e.g., `x: i32 = 5`)
-      seq(
-        field('name', $.identifier),
-        ':',
-        field('type', $._type),
-        '=',
-        field('value', $._expression)
-      )
     ),
 
     function_definition: $ => seq(
-      field('name', $.identifier), ':', $.function_signature, '=', field('body', $.block)
+      field('name', $.identifier), ':', $.function_signature , field('body', $.block)
     ),
 
     method_signature: $ => seq(
