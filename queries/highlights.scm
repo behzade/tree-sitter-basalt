@@ -1,123 +1,122 @@
-;; Keywords and Operators
-[
-  "import"
-  "pub"
-  "if"
-  "else"
-  "while"
-  "match"
-  "with"
-  "perform"
-  "meta"
-  "handler"
-  "impl"
-  "mut"
-] @keyword
+;; ====================
+;; IDENTIFIERS
+;; ====================
 
-[
-  "struct"
-  "interface"
-  "enum"
-  "effect"
-] @tag
+(identifier) @variable
 
-[
-  "="
-  ":="
-  "+="
-  "-="
-  "+"
-  "-"
-  "*"
-  "/"
-  ">"
-  "<"
-  ">="
-  "<="
-  "=="
-  "!="
-  "->"
-  "=>"
-] @operator
+; Constants: ALL_CAPS
+((identifier) @constant
+ (#match? @constant "^[A-Z][A-Z\\d_]+$"))
 
+; Type-like: UpperCamelCase
+((identifier) @type)
+  (#match? @type "^[A-Z][a-zA-Z\\d]*$")
 
-;;; Punctuation
-[ "{" "}" "(" ")" ] @punctuation.bracket
-[ "," ";" ":" ] @punctuation.delimiter
-[ "." "::" ] @punctuation.delimiter
+;; ====================
+;; DEFINITIONS
+;; ====================
 
+(function_definition name: (identifier) @function)
+(method_signature name: (identifier) @method)
+(parameter name: (identifier) @parameter)
+(variable_declaration name: (identifier) @variable)
 
-;;; Literals and Comments
-(comment) @comment
+(type_definition name: (identifier) @type)
+(enum_variant name: (identifier) @constructor)
+(field_declaration name: (identifier) @property)
+(struct_field name: (identifier) @property)
+(implementation type: (identifier) @type)
+(implementation interface: (identifier) @interface)
+
+;; ====================
+;; EXPRESSIONS
+;; ====================
+
+(call_expression function: (_) @function.call)
+(member_expression property: (identifier) @property)
+(path_expression module: (_) @namespace
+                 member: (identifier) @property)
+
+(lambda_expression) @function
+(perform_expression) @keyword
+(with_expression) @keyword
+
+(block) @block
+(meta_block) @attribute
+
+;; ====================
+;; TYPES
+;; ====================
+
+(handler_type) @type
+(generic_type name: (_) @type)
+(function_type) @type
+(never_type) @type.builtin
+(type_parameters "<" @punctuation.bracket ">" @punctuation.bracket)
+
+;; ====================
+;; LITERALS
+;; ====================
+
 (string_literal) @string
 (integer_literal) @number
 
+;; ====================
+;; KEYWORDS
+;; ====================
 
-;;; Types
-(type_definition name: (identifier) @type)
-(variable_declaration type: (_) @type)
-(field_declaration type: (_) @type)
-(parameter type: (_) @type)
-(function_signature return_type: (_) @type)
-(enum_variant data: (_) @type)
-(generic_type name: (_) @type)
-(type_parameters (_)) @type
+"return" @keyword.control
+"if" @keyword.control
+"else" @keyword.control
+"match" @keyword.control
+"while" @keyword.control
+"perform" @keyword
+"with" @keyword
+"impl" @keyword
+"pub" @keyword.modifier
+"mut" @keyword.modifier
+"import" @keyword
+"enum" @keyword
+"struct" @keyword
+"interface" @keyword
+"effect" @keyword
+"meta" @keyword
 
-;;; Built-in types
-(never_type) @type.builtin
-((identifier) @_id
-  (#any-of? @_id "i32" "str")) @type.builtin
+;; ====================
+;; COMMENTS
+;; ====================
 
+(comment) @comment
+((comment) @comment.documentation
+ (#match? @comment.documentation "^///"))
 
-;;; Functions
-(function_definition
-  name: (identifier) @function)
+;; ====================
+;; PUNCTUATION & OPERATORS
+;; ====================
 
-(call_expression
-  function: (identifier) @function)
-(call_expression
-  function: (path_expression
-    member: (identifier) @function))
-(call_expression
-  function: (member_expression
-    property: (identifier) @function))
+"(" @punctuation.bracket
+")" @punctuation.bracket
+"{" @punctuation.bracket
+"}" @punctuation.bracket
+"<" @punctuation.bracket
+">" @punctuation.bracket
+"," @punctuation.delimiter
+":" @punctuation.delimiter
+"." @punctuation.delimiter
+";" @punctuation.delimiter
 
-
-;;; Constructors
-(struct_expression
-  type: (_) @constructor)
-
-(enum_variant
-  name: (identifier) @constructor)
-
-(destructuring_pattern
-  type: (_) @constructor)
-
-
-;;; Properties, Parameters, and Variables
-(member_expression
-  property: (identifier) @property)
-
-(struct_field
-  name: (identifier) @property)
-
-(path_expression
-  module: (identifier) @namespace)
-
-(variable_declaration
-  name: (identifier) @variable)
-
-(destructuring_pattern
-  name: (identifier) @variable)
-
-(parameter
-  name: (identifier) @variable.parameter)
-
-(lambda_expression
-  (identifier) @variable.parameter)
-
-
-;;; Fallback for any remaining identifier
-(identifier) @variable
-
-
+"::" @operator
+":=" @operator
+"=" @operator
+"+=" @operator
+"-=" @operator
+"+" @operator
+"-" @operator
+"*" @operator
+"/" @operator
+"==" @operator
+"!=" @operator
+">=" @operator
+"<=" @operator
+">" @operator
+"<" @operator
