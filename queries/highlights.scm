@@ -4,7 +4,7 @@
 
 (comment) @comment
 ((comment) @comment.documentation
- (#match? @comment.documentation "^///"))
+  (#match? @comment.documentation "^///"))
 
 ;; ====================
 ;; KEYWORDS
@@ -47,6 +47,8 @@
 "." @punctuation.delimiter
 ";" @punctuation.delimiter
 
+;; ✅ UPDATED: Added the '=>' operator for match arms.
+"=>" @operator
 "::" @operator
 ":=" @operator
 "=" @operator
@@ -69,9 +71,12 @@
 
 (identifier) @variable
 
+;; A simple regex can't distinguish types from constants reliably,
+;; but this captures ALL_CAPS constants.
 ((identifier) @constant
- (#match? @constant "^[A-Z][A-Z\\d_]+$"))
+  (#match? @constant "^[A-Z][A-Z\\d_]+$"))
 
+;; Capture PascalCase identifiers as types.
 ((identifier) @type
   (#match? @type "^[A-Z][a-zA-Z\\d]*$"))
 
@@ -81,12 +86,9 @@
 
 ; Definitions
 (function_definition name: (identifier) @function)
-(function_signature return_type: (identifier) @type)
 (method_signature name: (identifier) @function)
 (parameter name: (identifier) @parameter)
-(parameter type: (identifier) @type)
 (variable_declaration name: (identifier) @variable)
-(variable_declaration type: (identifier) @type)
 (type_definition name: (identifier) @type)
 (enum_variant name: (identifier) @constructor)
 (implementation type: (identifier) @type)
@@ -94,26 +96,31 @@
 (field_declaration name: (identifier) @property)
 (struct_field name: (identifier) @property)
 (path_expression module: (_) @namespace)
-; For a pattern like `MyModule.MyVariant(name)`:
+
+; ✅ UPDATED: More specific pattern highlighting.
+; For a pattern like `MyModule::MyVariant(data)`
 (destructuring_pattern
-  ; Capture `MyModule` as a namespace
   type: (path_expression
     module: (identifier) @namespace
     member: (identifier) @constructor)
-  ; Capture `name` as a variable
   name: (identifier) @variable)
-(field_declaration type: (identifier) @type)
 
-; General property access rule. This comes first.
+; For a pattern like `MyEnum::Variant` (without data)
+(match_arm
+  pattern: (path_expression
+    member: (identifier) @constructor))
+
+; General property access rule.
 (member_expression property: (identifier) @property)
 
-; Call-specific rules. These come AFTER the general property rule to override it.
+; Call-specific rules to override the general property rule.
 (call_expression function: (identifier) @function.call)
 (call_expression
   function: (member_expression
     property: (identifier) @function.call))
 
-(lambda_expression) @function
+; ✅ UPDATED: Removed old `lambda_expression` and added the new `anonymous_function_expression`.
+(anonymous_function_expression) @function
 
 (block) @block
 (meta_block) @attribute
@@ -121,6 +128,12 @@
 ;; ====================
 ;; TYPES (Specific Nodes)
 ;; ====================
+
+; Highlight the return type of a function signature.
+(function_signature return_type: (_) @type)
+(parameter type: (_) @type)
+(variable_declaration type: (_) @type)
+(field_declaration type: (_) @type)
 
 (handler_type) @type
 (generic_type name: (_) @type)

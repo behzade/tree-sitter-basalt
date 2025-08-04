@@ -30,6 +30,10 @@
     "named": true,
     "subtypes": [
       {
+        "type": "anonymous_function_expression",
+        "named": true
+      },
+      {
         "type": "binary_expression",
         "named": true
       },
@@ -42,10 +46,6 @@
         "named": true
       },
       {
-        "type": "handler_expression",
-        "named": true
-      },
-      {
         "type": "identifier",
         "named": true
       },
@@ -55,10 +55,6 @@
       },
       {
         "type": "integer_literal",
-        "named": true
-      },
-      {
-        "type": "lambda_expression",
         "named": true
       },
       {
@@ -172,6 +168,25 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "anonymous_function_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "function_signature",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "arguments",
@@ -462,6 +477,10 @@
         {
           "type": "parameters",
           "named": true
+        },
+        {
+          "type": "with_clause",
+          "named": true
         }
       ]
     }
@@ -487,21 +506,6 @@
       "types": [
         {
           "type": "type_parameters",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "handler_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "function_definition",
           "named": true
         }
       ]
@@ -649,25 +653,6 @@
       "types": [
         {
           "type": "method_signature",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "lambda_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        },
-        {
-          "type": "parameters",
           "named": true
         }
       ]
