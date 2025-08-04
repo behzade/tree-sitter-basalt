@@ -3,7 +3,8 @@
 
 ;; Function definitions introduce a new scope
 (function_definition
-  name: (identifier) @definition.function
+  (function_signature
+    name: (identifier) @definition.function)
   body: (_) @scope)
 
 ;; Variable declarations introduce variables in the current scope
@@ -13,10 +14,6 @@
 ;; Parameters introduce variables in the function scope
 (parameter
   name: (identifier) @definition.parameter)
-
-;; Lambda expressions introduce parameters in their scope
-(lambda_expression
-  (identifier) @definition.parameter)
 
 ;; Struct fields introduce properties
 (struct_field

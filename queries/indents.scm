@@ -18,8 +18,7 @@
   body: (_) @indent)
 
 ;; Match expressions should indent their arms
-(match_expression
-  body: (_) @indent)
+(match_expression) @indent
 
 ;; Struct definitions should indent their fields
 (struct_definition) @indent
@@ -38,10 +37,6 @@
 
 ;; Meta blocks should indent their contents
 (meta_block) @indent
-
-;; Lambda expressions should indent their body
-(lambda_expression
-  body: (_) @indent)
 
 ;; With expressions should indent their handler
 (with_expression

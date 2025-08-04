@@ -34,8 +34,5 @@
 ;; Meta blocks can be folded
 (meta_block) @fold
 
-;; Lambda expressions can be folded
-(lambda_expression) @fold
-
 ;; With expressions can be folded
 (with_expression) @fold 
