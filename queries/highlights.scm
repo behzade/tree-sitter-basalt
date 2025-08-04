@@ -81,9 +81,12 @@
 
 ; Definitions
 (function_definition name: (identifier) @function)
+(function_signature return_type: (identifier) @type)
 (method_signature name: (identifier) @function)
 (parameter name: (identifier) @parameter)
+(parameter type: (identifier) @type)
 (variable_declaration name: (identifier) @variable)
+(variable_declaration type: (identifier) @type)
 (type_definition name: (identifier) @type)
 (enum_variant name: (identifier) @constructor)
 (implementation type: (identifier) @type)
@@ -91,6 +94,15 @@
 (field_declaration name: (identifier) @property)
 (struct_field name: (identifier) @property)
 (path_expression module: (_) @namespace)
+; For a pattern like `MyModule.MyVariant(name)`:
+(destructuring_pattern
+  ; Capture `MyModule` as a namespace
+  type: (path_expression
+    module: (identifier) @namespace
+    member: (identifier) @constructor)
+  ; Capture `name` as a variable
+  name: (identifier) @variable)
+(field_declaration type: (identifier) @type)
 
 ; General property access rule. This comes first.
 (member_expression property: (identifier) @property)
