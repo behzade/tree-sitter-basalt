@@ -1,0 +1,40 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "basalt",
+      "camelcase": "Basalt",
+      "title": "Basalt",
+      "scope": "source.basalt",
+      "file-types": [
+        "basalt"
+      ],
+      "injection-regex": "^basalt$",
+      "class-name": "TreeSitterBasalt"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Basalt Language",
+    "authors": [
+      {
+        "name": "Behzad Ehsani",
+        "email": "ehsani.eof@gmail.com",
+        "url": "https://behzad.dev/"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/behzade/basalt"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
