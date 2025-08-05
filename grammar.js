@@ -55,9 +55,7 @@ module.exports = grammar({
     $._type,
     $._pattern,
   ],
-  conflicts: ($) => [
-    [$._expression, $._type],
-  ],
+  conflicts: ($) => [[$._expression, $._type]],
   word: ($) => $.identifier,
 
   rules: {
@@ -148,7 +146,7 @@ module.exports = grammar({
         field("type", $.identifier),
         ":",
         "impl",
-        field("interface", $.identifier),
+        optional(field("interface", $.identifier)),
         $.function_block,
       ),
 
@@ -348,7 +346,10 @@ module.exports = grammar({
     never_type: ($) => "!",
 
     parameter: ($) =>
-      seq(field("name", $.identifier), ":", field("type", $._type)),
+      choice(
+        alias("self", $.self),
+        seq(field("name", $.identifier), ":", field("type", $._type)),
+      ),
     arguments: ($) => seq("(", optional(sep1($._expression, ",")), ")"),
 
     with_clause: ($) =>

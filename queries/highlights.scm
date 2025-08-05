@@ -82,6 +82,7 @@
 
 ; Definitions
 (parameter name: (identifier) @parameter)
+(parameter (self) @variable.builtin)
 (variable_declaration name: (identifier) @variable)
 (type_definition name: (identifier) @type)
 (enum_variant name: (identifier) @constructor)

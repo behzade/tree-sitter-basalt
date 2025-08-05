@@ -593,7 +593,7 @@
     "fields": {
       "interface": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -760,7 +760,7 @@
     "fields": {
       "name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "identifier",
@@ -770,7 +770,7 @@
       },
       "type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "_type",
@@ -778,6 +778,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "self",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1278,6 +1288,10 @@
   {
     "type": "return",
     "named": false
+  },
+  {
+    "type": "self",
+    "named": true
   },
   {
     "type": "string_literal",
