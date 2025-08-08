@@ -3,8 +3,7 @@
 
 ;; Function definitions introduce a new scope
 (function_definition
-  (function_signature
-    name: (identifier) @definition.function)
+  (function_head name: (identifier) @definition.function)
   body: (_) @scope)
 
 ;; Variable declarations introduce variables in the current scope
@@ -20,16 +19,16 @@
   name: (identifier) @definition.field)
 
 ;; Type definitions introduce types
-(type_definition
+(type_declaration
   name: (identifier) @definition.type)
 
 ;; Enum variants introduce constructors
-(enum_variant
+(union_variant
   name: (identifier) @definition.constructor)
 
 ;; Import paths introduce namespaces
-(import_declaration
-  (import_path) @definition.namespace)
+(import_item (import_path) @definition.namespace)
+(import_item alias: (identifier) @definition.namespace)
 
 ;; References to variables
 (identifier) @reference 

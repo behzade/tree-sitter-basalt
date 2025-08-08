@@ -21,12 +21,13 @@
 "pub" @keyword.modifier
 "mut" @keyword.modifier
 "import" @keyword
-"enum" @keyword
-"struct" @keyword
+"type" @keyword
 "interface" @keyword
 "effect" @keyword
 "meta" @keyword
 "handler" @keyword
+"let" @keyword
+"as" @keyword
 
 ;; ====================
 ;; LITERALS
@@ -49,10 +50,10 @@
 ";" @punctuation.delimiter
 
 "::" @operator
-":=" @operator
+"|" @operator
+"->" @operator
 "=" @operator
-"+=" @operator
-"-=" @operator
+"<-" @operator
 "+" @operator
 "-" @operator
 "*" @operator
@@ -82,10 +83,10 @@
 
 ; Definitions
 (parameter name: (identifier) @parameter)
-(parameter (self) @variable.builtin)
+(self_parameter (self) @variable.builtin)
 (variable_declaration name: (identifier) @variable)
-(type_definition name: (identifier) @type)
-(enum_variant name: (identifier) @constructor)
+(type_declaration name: (identifier) @type)
+(union_variant name: (identifier) @constructor)
 (implementation type: (identifier) @type)
 (implementation interface: (identifier) @interface)
 (field_declaration name: (identifier) @property)
@@ -98,6 +99,7 @@
 
 ; Import paths
 (import_path) @namespace
+(import_item alias: (identifier) @namespace)
 
 ; General property access rule. This comes first.
 (member_expression property: (identifier) @property)
@@ -119,23 +121,24 @@
 (if_expression) @expression
 (while_expression) @expression
 (match_expression) @expression
+(with_block) @expression
 (with_expression) @expression
 (perform_expression) @expression
 
 ; Pattern highlighting
 (destructuring_pattern) @pattern
-(match_arm) @pattern
+(match_arm_braced) @pattern
+(match_arm_pipe) @pattern
 
 ; Block highlighting
 (block) @block
-(meta_block) @attribute
+(meta_expression) @attribute
 
 ; Definition highlighting
-(struct_definition) @type
-(interface_definition) @type
-(effect_definition) @type
-(enum_definition) @type
-(handler_definition) @type
+(type_declaration) @type
+(interface_declaration) @type
+(effect_declaration) @type
+(handler_declaration) @type
 
 ;; ====================
 ;; TYPES (Specific Nodes)
@@ -148,6 +151,7 @@
 (primitive_type) @type.builtin
 
 (type_parameters "<" @punctuation.bracket ">" @punctuation.bracket)
+(type_parameters_decl "<" @punctuation.bracket ">" @punctuation.bracket)
 
 ; Arguments and clauses
 (arguments) @expression

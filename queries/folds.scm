@@ -17,22 +17,22 @@
 (match_expression) @fold
 
 ;; Struct definitions can be folded
-(struct_definition) @fold
+(type_declaration) @fold
 
 ;; Interface definitions can be folded
-(interface_definition) @fold
+(interface_declaration) @fold
 
 ;; Effect definitions can be folded
-(effect_definition) @fold
+(effect_declaration) @fold
 
 ;; Enum definitions can be folded
-(enum_definition) @fold
+(union_type) @fold
 
 ;; Implementation blocks can be folded
 (implementation) @fold
 
 ;; Meta blocks can be folded
-(meta_block) @fold
+(meta_expression) @fold
 
 ;; With expressions can be folded
 (with_expression) @fold 

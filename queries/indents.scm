@@ -21,22 +21,22 @@
 (match_expression) @indent
 
 ;; Struct definitions should indent their fields
-(struct_definition) @indent
+(type_declaration) @indent
 
 ;; Interface definitions should indent their methods
-(interface_definition) @indent
+(interface_declaration) @indent
 
 ;; Effect definitions should indent their methods
-(effect_definition) @indent
+(effect_declaration) @indent
 
 ;; Enum definitions should indent their variants
-(enum_definition) @indent
+(union_type) @indent
 
 ;; Implementation blocks should indent their functions
 (implementation) @indent
 
 ;; Meta blocks should indent their contents
-(meta_block) @indent
+(meta_expression) @indent
 
 ;; With expressions should indent their handler
 (with_expression
