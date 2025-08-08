@@ -15,6 +15,7 @@
 "else" @keyword.control
 "match" @keyword.control
 "while" @keyword.control
+"fn" @keyword
 "perform" @keyword
 "with" @keyword
 "impl" @keyword
@@ -49,10 +50,10 @@
 "." @punctuation.delimiter
 ";" @punctuation.delimiter
 
-"::" @operator
 "|" @operator
 "->" @operator
 "=" @operator
+":=" @operator
 "<-" @operator
 "+" @operator
 "-" @operator
@@ -94,8 +95,7 @@
 
 ; Function definitions and signatures
 (function_signature name: (identifier) @function)
-(function_definition) @function
-(function_block) @function
+(function_definition name: (identifier) @function)
 
 ; Import paths
 (import_path) @namespace
@@ -108,14 +108,11 @@
 (call_expression
   function: (member_expression
     property: (identifier) @function.call))
-
-; Path-based function calls (like std::fmt::println)
 (call_expression
-  function: (path_expression (identifier) @function.call))
+  function: (identifier) @function.call)
 
 ; Expression highlighting
 (parenthesized_expression) @expression
-(path_expression) @expression
 (binary_expression) @expression
 (struct_expression) @expression
 (if_expression) @expression
@@ -149,6 +146,8 @@
 (function_type) @type
 (never_type) @type.builtin
 (primitive_type) @type.builtin
+(record_type) @type
+(union_type) @type
 
 (type_parameters "<" @punctuation.bracket ">" @punctuation.bracket)
 (type_parameters_decl "<" @punctuation.bracket ">" @punctuation.bracket)

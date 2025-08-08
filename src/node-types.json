@@ -82,10 +82,6 @@
         "named": true
       },
       {
-        "type": "path_expression",
-        "named": true
-      },
-      {
         "type": "perform_expression",
         "named": true
       },
@@ -172,11 +168,11 @@
         "named": true
       },
       {
-        "type": "never_type",
+        "type": "member_expression",
         "named": true
       },
       {
-        "type": "path_expression",
+        "type": "never_type",
         "named": true
       },
       {
@@ -287,7 +283,11 @@
         "required": true,
         "types": [
           {
-            "type": "path_expression",
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           }
         ]
@@ -393,23 +393,7 @@
             "named": true
           }
         ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "function_head",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "function_head",
-    "named": true,
-    "fields": {
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -419,28 +403,14 @@
             "named": true
           }
         ]
-      },
-      "return_type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_type",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
-          "type": "parameter",
-          "named": true
-        },
-        {
-          "type": "with_clause",
+          "type": "signature",
           "named": true
         }
       ]
@@ -466,7 +436,7 @@
       "required": true,
       "types": [
         {
-          "type": "function_type",
+          "type": "signature",
           "named": true
         }
       ]
@@ -508,7 +478,7 @@
             "named": true
           },
           {
-            "type": "path_expression",
+            "type": "member_expression",
             "named": true
           }
         ]
@@ -921,21 +891,6 @@
     }
   },
   {
-    "type": "path_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "perform_expression",
     "named": true,
     "fields": {},
@@ -1011,6 +966,36 @@
     }
   },
   {
+    "type": "signature",
+    "named": true,
+    "fields": {
+      "return_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "with_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
@@ -1029,18 +1014,7 @@
   {
     "type": "struct_expression",
     "named": true,
-    "fields": {
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_type",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
       "required": false,
@@ -1387,7 +1361,7 @@
     "named": false
   },
   {
-    "type": "::",
+    "type": ":=",
     "named": false
   },
   {
@@ -1437,6 +1411,10 @@
   },
   {
     "type": "else",
+    "named": false
+  },
+  {
+    "type": "fn",
     "named": false
   },
   {

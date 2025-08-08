@@ -20,12 +20,13 @@ const PREC = {
   unary: 9,
   return: 10,
   call: 11,
-  path: 12,
-  member: 13,
-  pattern: 14,
-  struct_literal: 15,
-  function_signature: 16,
-  function_type: 17,
+  member: 12,
+  pattern: 13,
+  struct_literal: 14,
+  function_signature: 15,
+  function_type: 16,
+  union: 17,
+  declaration: 18,
 };
 
 const numeric_types = [
@@ -56,8 +57,7 @@ module.exports = grammar({
     $._pattern,
   ],
   conflicts: ($) => [
-    [$._expression, $._type],
-    [$.type_declaration, $._type],
+      [$._type, $._expression]
   ],
   word: ($) => $.identifier,
 
@@ -65,7 +65,11 @@ module.exports = grammar({
     source_file: ($) => repeat($._statement),
 
     _statement: ($) =>
-      choice($._declaration, $.expression_statement, $.return_statement),
+      choice(
+        prec(PREC.declaration, $._declaration),
+        $.expression_statement,
+        $.return_statement
+      ),
 
     expression_statement: ($) => seq($._expression, optional(";")),
 
@@ -84,14 +88,12 @@ module.exports = grammar({
         $.variable_declaration,
       ),
 
-    // Imports: import { path [as alias] ... }
     import_declaration: ($) =>
       seq("import", "{", repeat($.import_item), "}"),
     import_item: ($) =>
       seq($.import_path, optional(seq("as", field("alias", $.identifier)))),
     import_path: ($) => sep1($.identifier, "/"),
 
-    // type Name = { fields } | V1(T) | V2(U) | Alias
     type_declaration: ($) =>
       seq(
         optional("pub"),
@@ -99,10 +101,9 @@ module.exports = grammar({
         field("name", $.identifier),
         optional($.type_parameters_decl),
         "=",
-        field("type", choice($.record_type, $.union_type, $._type)),
+        field("type", $._type),
       ),
 
-    // interface Name = { name: (params) -> Ret [with ...] ... }
     interface_declaration: ($) =>
       seq(
         optional("pub"),
@@ -115,7 +116,6 @@ module.exports = grammar({
         "}",
       ),
 
-    // effect Name[<T,...>] = { name: (params) -> Ret ... }
     effect_declaration: ($) =>
       seq(
         optional("pub"),
@@ -128,7 +128,6 @@ module.exports = grammar({
         "}",
       ),
 
-    // handler Name: Effect [with ...] [=] { fn defs }
     handler_declaration: ($) =>
       seq(
         optional("pub"),
@@ -141,7 +140,6 @@ module.exports = grammar({
         $.function_block,
       ),
 
-    // impl Type [ : Interface ] = { fn defs }
     implementation: ($) =>
       seq(
         "impl",
@@ -153,42 +151,58 @@ module.exports = grammar({
 
     function_block: ($) => seq("{", repeat($.function_definition), "}"),
 
-    // let declarations (new syntax only)
     variable_declaration: ($) =>
-      seq(
-        "let",
-        optional("mut"),
-        field("name", $.identifier),
-        optional(seq(":", field("type", $._type))),
-        "=",
-        field("value", $._expression),
+      choice(
+        seq(
+          "let",
+          optional("mut"),
+          field("name", $.identifier),
+          optional(seq(":", field("type", $._type))),
+          "=",
+          field("value", $._expression),
+        ),
+        seq(
+          optional("mut"),
+          field("name", $.identifier),
+          ":",
+          field("type", $._type),
+          "=",
+          field("value", $._expression),
+        ),
+        seq(
+          optional("mut"),
+          field("name", $.identifier),
+          ":=",
+          field("value", $._expression),
+        ),
       ),
 
-    // Interface/effect member signatures (type-level)
-    function_signature: ($) =>
-      prec(
-        PREC.function_signature,
-        seq(field("name", $.identifier), ":", $.function_type),
-      ),
-
-    // Function definitions (value-level)
-    function_definition: ($) =>
-      seq($.function_head, field("body", $.block)),
-    function_head: ($) =>
+    signature: ($) =>
       seq(
-        field("name", $.identifier),
         "(",
         optional(sep1($.parameter, ",")),
         ")",
-        optional(seq("->", field("return_type", $._type))),
+        "->",
+        field("return_type", $._type),
         optional($.with_clause),
+      ),
+
+    function_signature: ($) =>
+      prec(PREC.function_signature, seq(field("name", $.identifier), $.signature)),
+
+    function_definition: ($) =>
+      seq(
+        "fn",
+        field("name", $.identifier),
+        $.signature,
+        "=",
+        field("body", $.block)
       ),
 
     _expression: ($) =>
       choice(
         $.identifier,
         $._literal,
-        $.path_expression,
         $.parenthesized_expression,
         $.binary_expression,
         $.call_expression,
@@ -206,11 +220,8 @@ module.exports = grammar({
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
-    path_expression: ($) => prec(PREC.path, sep1($.identifier, "::")),
-
     binary_expression: ($) =>
       choice(
-        // Assignment: mutation uses only <-
         prec.right(PREC.assign, seq($._expression, "<-", $._expression)),
         prec.left(PREC.term, seq($._expression, choice("+", "-"), $._expression)),
         prec.left(PREC.factor, seq($._expression, choice("*", "/"), $._expression)),
@@ -229,24 +240,24 @@ module.exports = grammar({
 
     block: ($) => prec(1, seq("{", repeat($._statement), optional($._expression), "}")),
 
-    // Value-level record literals; optional leading type name (e.g., Person { ... })
     struct_expression: ($) =>
-      prec(PREC.struct_literal, seq(optional(field("type", $._type)), "{", repeat($.struct_field), "}")),
+      prec(PREC.struct_literal, seq("{", repeat($.struct_field), "}")),
 
     struct_field: ($) =>
       seq(field("name", $.identifier), ":", field("value", $._expression), optional(",")),
 
-    // Type-level record type
     record_type: ($) =>
       seq("{", optional(repeat($.field_declaration)), "}"),
     field_declaration: ($) =>
       seq(field("name", $.identifier), ":", field("type", $._type), optional(",")),
 
-    // Sum type: V1(T) | V2(U) | V3
-    union_type: ($) => sep1($.union_variant, "|"),
+    // A union type must have at least two variants separated by a pipe.
+    // This resolves the ambiguity where a single identifier could be seen
+    // as a complete union type.
+    union_type: ($) => prec(PREC.union, seq($.union_variant, "|", sep1($.union_variant, "|"))),
+
     union_variant: ($) =>
       choice(
-        // Prefer the payload form when '(' follows
         prec(1, seq(field("name", $.identifier), "(", field("data", $._type), ")")),
         prec(0, field("name", $.identifier)),
       ),
@@ -263,10 +274,8 @@ module.exports = grammar({
 
     while_expression: ($) => seq("while", field("condition", $._expression), field("body", $.block)),
 
-    // match expr { arms }  OR  match expr | pat -> expr ...
     match_expression: ($) =>
       choice(
-        // Braced form
         prec.left(1,
           seq(
             "match",
@@ -276,7 +285,6 @@ module.exports = grammar({
             "}",
           ),
         ),
-        // Pipe form
         prec.right(2, seq("match", $._expression, repeat1($.match_arm_pipe))),
       ),
     match_arm_braced: ($) =>
@@ -284,7 +292,6 @@ module.exports = grammar({
     match_arm_pipe: ($) =>
       prec(2, seq("|", field("pattern", $._pattern), "->", field("body", $._expression))),
 
-    // Call-site with expression: callee with {Handlers} or with block
     with_expression: ($) =>
       prec.left(
         PREC.with,
@@ -303,26 +310,25 @@ module.exports = grammar({
 
     perform_expression: ($) => seq("perform", $._expression),
 
-    // meta as block or prefix to expression
     meta_expression: ($) =>
       prec.left(PREC.unary + 1, seq("meta", choice($.block, $._expression))),
 
     _pattern: ($) => choice($.identifier, $._literal, $.destructuring_pattern),
 
     destructuring_pattern: ($) =>
-      prec(PREC.pattern, seq(field("type", $.path_expression), "(", field("name", $.identifier), ")")),
+      prec(PREC.pattern, seq(field("type", choice($.identifier, $.member_expression)), "(", field("name", $.identifier), ")")),
 
     _type: ($) =>
       choice(
+        $.union_type,
         $.generic_type,
         $.function_type,
         $.never_type,
         $.handler_type,
         $.primitive_type,
         $.identifier,
-        $.path_expression,
+        $.member_expression,
         $.record_type,
-        $.union_type,
       ),
 
     primitive_type: ($) => alias(choice(...primitive_types), $.primitive_type),
@@ -333,10 +339,9 @@ module.exports = grammar({
     generic_type: ($) =>
       prec.right(
         PREC.call,
-        seq(field("name", choice($.identifier, $.path_expression)), $.type_parameters),
+        seq(field("name", choice($.identifier, $.member_expression)), $.type_parameters),
       ),
 
-    // For type declarations (e.g., type Name<T> = ...)
     type_parameters_decl: ($) => seq("<", sep1($.identifier, ","), ">"),
 
     type_parameters: ($) => seq("<", sep1($._type, ","), ">"),
